@@ -1,0 +1,30 @@
+start: statement+
+statement: variable_declaration
+         | if_statement
+         | loop_statement
+         | class_definition
+         | expression
+
+variable_declaration: "let" CNAME "=" expression
+if_statement: "if" "(" expression ")" "{" statement* "}"
+             (elif_clause)*
+             ("else" "{" statement* "}")?
+elif_clause: "elif" "(" expression ")" "{" statement* "}"
+loop_statement: "for" "(" variable_declaration ";" expression ";" expression ")" "{" statement* "}"
+              | "while" "(" expression ")" "{" statement* "}"
+class_definition: "class" CNAME "{" (method_definition | constructor_definition)* "}"
+constructor_definition: "init" "(" CNAME ("," CNAME)* ")" "{" statement* "}"
+method_definition: CNAME "(" CNAME ("," CNAME)* ")" "{" statement* "}"
+
+expression: binary_expression
+binary_expression: term (("+" | "-" | "*" | "/" | "%" | "==" | "!=" | ">" | "<" | "and" | "or") term)*
+                 | bitwise_expression
+bitwise_expression: bitwise_term (("&" | "|" | "^" | "~" | "<<" | ">>") bitwise_term)*
+term: CNAME | INT | FLOAT | ESCAPED_STRING | "(" expression ")"
+
+%import common.CNAME
+%import common.INT
+%import common.FLOAT
+%import common.ESCAPED_STRING
+%import common.WS
+%ignore WS
